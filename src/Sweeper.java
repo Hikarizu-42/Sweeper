@@ -9,15 +9,18 @@ import javax.swing.JOptionPane;
 
 public class Sweeper implements ActionListener
 {
-    int WIDTH = 20;
-    int HEIGHT = 20;
+    public final static int WIDTH = 20;
+    public final static int HEIGHT = 20;
+    public final static int [] monsterNumbers = {0,20,10,5};
+    public final static Color [] monsterColors = {null,Color.CYAN,Color.BLUE,Color.RED};
+    public final static Color gameOverColor = Color.BLACK;
+    public final static Color unopenedFieldsColor = Color.lightGray;
+    public final static String doNotDisplay = "0";
     JFrame frame = new JFrame("Sweeper");
     JButton reset = new JButton("Reset");
     JButton[][] buttons = new JButton[WIDTH][HEIGHT];
     Cell[][] cells = new Cell[WIDTH][HEIGHT];
     Container grid = new Container();
-    int [] monsterNumbers = {0,20,10,5};
-    Color [] monsterColors = {null,Color.CYAN,Color.BLUE,Color.RED};
 
     public static void main(String[] args)
     {
@@ -49,7 +52,8 @@ public class Sweeper implements ActionListener
         //initialize list of all positions
         ArrayList<Coords> positions = new ArrayList<Coords>();
         for (int x = 0; x < WIDTH; x++)
-            for (int y = 0; y < HEIGHT; y++) {
+            for (int y = 0; y < HEIGHT; y++)
+            {
                 Coords myCoords = new Coords(x, y);
                 positions.add(myCoords);
             }
@@ -113,31 +117,31 @@ public class Sweeper implements ActionListener
         {
             buttons[x][y].setEnabled(false);
             if (y>0 && buttons[x][y-1].isEnabled() && cells[x][y-1].getMonsterStr() == 0)
-                ClearDirection(x,y-1);//up
+                ClearNeighbours(x,y-1);//up
 
             if (x<cells.length-1 && buttons[x+1][y].isEnabled() && cells[x+1][y].getMonsterStr() == 0)
-                ClearDirection(x+1,y);//right
+                ClearNeighbours(x+1,y);//right
 
             if (y<cells[0].length-1 && buttons[x][y+1].isEnabled() && cells[x][y+1].getMonsterStr() == 0)
-                ClearDirection(x,y+1);//down
+                ClearNeighbours(x,y+1);//down
 
             if (x>0 && buttons[x-1][y].isEnabled() && cells[x-1][y].getMonsterStr() == 0)
-                ClearDirection(x-1,y);//left
+                ClearNeighbours(x-1,y);//left
 
             if (x>0 && y>0 && cells[x-1][y-1].getMonsterStr() == 0 && !cells[x - 1][y - 1].checkIsEmpty())
-                ClearDirection(x-1,y-1);//up left
+                ClearNeighbours(x-1,y-1);//up left
 
             if (x<cells.length-1 && y>0 && cells[x+1][y-1].getMonsterStr() == 0 && !cells[x + 1][y - 1].checkIsEmpty())
-                ClearDirection(x+1,y-1);//up right
+                ClearNeighbours(x+1,y-1);//up right
 
             if (x<cells.length-1 && y<cells[0].length-1 && cells[x+1][y+1].getMonsterStr() == 0&& !cells[x + 1][y + 1].checkIsEmpty())
-                ClearDirection(x+1,y+1);//down right
+                ClearNeighbours(x+1,y+1);//down right
 
             if (x>0 && y<cells[0].length-1 && cells[x-1][y+1].getMonsterStr() == 0 && !cells[x - 1][y + 1].checkIsEmpty())
-                ClearDirection(x-1,y+1);//down left
+                ClearNeighbours(x-1,y+1);//down left
         }
     }
-    public void ClearDirection(int x, int y)
+    public void ClearNeighbours(int x, int y)
     {
         if(cells[x][y].checkIsEmpty())
         {
@@ -147,7 +151,7 @@ public class Sweeper implements ActionListener
     public void Click(int x,int y)
     {
         String display = cells[x][y].getDisplayVal();
-        if(!"0".equals(display))
+        if(!doNotDisplay.equals(display))
             buttons[x][y].setText(display);
         buttons[x][y].setEnabled(false);
     }
@@ -185,12 +189,12 @@ public class Sweeper implements ActionListener
             {
                 if (buttons[x][y].isEnabled())
                 {
-                    buttons[x][y].setBackground(Color.LIGHT_GRAY);
+                    buttons[x][y].setBackground(unopenedFieldsColor);
                     RevealMonsters(x, y);
                 }
                 buttons[x][y].setEnabled(false);
             }
-        buttons[A][B].setBackground(Color.BLACK);
+        buttons[A][B].setBackground(gameOverColor);
         buttons[A][B].setText(cells[A][B].getDisplayVal());
     }
     @Override
