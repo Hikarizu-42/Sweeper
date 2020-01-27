@@ -33,7 +33,7 @@ public class Cell
     }
     public boolean checkIsEmpty()
     {
-        if(monsterStr == 0 && Sweeper.doNotDisplay.equals(displayVal))
+        if(monsterStr == 0 && Sweeper.DO_NOT_DISPLAY.equals(displayVal))
             return true;
         else return false;
     }
